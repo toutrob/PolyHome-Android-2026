@@ -1,3 +1,6 @@
 package com.robin.polyhome
 
-data class LoginData()
+data class LoginData(
+    val login: String,
+    val password: String
+)

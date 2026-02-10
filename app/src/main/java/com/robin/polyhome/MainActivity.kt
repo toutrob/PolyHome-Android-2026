@@ -1,12 +1,14 @@
-package com.salvio.polyhome
-
+package com.robin.polyhome
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,12 +27,12 @@ class MainActivity : AppCompatActivity() {
 
         val buttonConnexion = findViewById<Button>(R.id.buttonConnexion)
 
-        buttonConnexion.setOnClickListener {
+        buttonConnexion?.setOnClickListener {
             val intentLogin = Intent(this, LoginActivity::class.java)
             startActivity(intentLogin)
         }
 
-        buttonNewUser.setOnClickListener {
+        buttonNewUser?.setOnClickListener {
             val intentRegister = Intent(this, RegisterActivity::class.java)
             startActivity(intentRegister)
         }
