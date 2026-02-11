@@ -7,3 +7,7 @@ data class DeviceData(
     var power: Int?,
     var opening: Int?
 )
+
+data class DevicesResponse(
+    val devices: List<DeviceData>
+)

@@ -1,7 +1,7 @@
 package com.robin.polyhome
 
 data class HouseData(
-    val houseId: String,
+    val houseId: Int,
     val owner: Boolean
 ) {
     override fun toString(): String {

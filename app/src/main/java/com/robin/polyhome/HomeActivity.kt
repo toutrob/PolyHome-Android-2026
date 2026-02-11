@@ -71,7 +71,7 @@ class HomeActivity : AppCompatActivity() {
         if (selectedHouse != null && token != null) {
             val intent = Intent(this, DevicesActivity::class.java)
             intent.putExtra("token", token)
-            intent.putExtra("houseId", selectedHouse.houseId)
+            intent.putExtra("houseId", selectedHouse.houseId.toString())
             intent.putExtra("filter", deviceTypeFilter) // On passe le filtre (lampe ou volet)
             startActivity(intent)
         } else {

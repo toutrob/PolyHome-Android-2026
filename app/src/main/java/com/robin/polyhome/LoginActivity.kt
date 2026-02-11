@@ -50,6 +50,16 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 Toast.makeText(this, "Connected !", Toast.LENGTH_SHORT).show()
+
+                // intent pour aller vers HomeActivity
+                val intent = Intent(this, HomeActivity::class.java)
+                // On passe le token
+                intent.putExtra("token", token.token)
+                startActivity(intent)
+
+                // pour ne pas revenir au login avec le bouton retour
+                finish()
+
             } else if (responseCode == 400) {
                 Toast.makeText(this, "Data incorrect, try again", Toast.LENGTH_SHORT).show()
             } else if (responseCode == 404) {

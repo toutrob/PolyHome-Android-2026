@@ -37,14 +37,14 @@ class DevicesActivity : AppCompatActivity() {
     private fun loadDevices() {
         if (houseId != null && token != null) {
             val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices"
-            Api().get<List<DeviceData>>(url, ::loadDevicesSuccess, token)
+            Api().get<DevicesResponse>(url, ::loadDevicesSuccess, token)
         }
     }
 
-    private fun loadDevicesSuccess(responseCode: Int, loadedDevices: List<DeviceData>?) {
-        if (responseCode == 200 && loadedDevices != null) {
+    private fun loadDevicesSuccess(responseCode: Int, response: DevicesResponse?) {
+        if (responseCode == 200 && response?.devices != null) {
             devicesList.clear()
-            for (device in loadedDevices) {
+            for (device in response.devices) {
                 if (filterType == "light" && device.type == "light") {
                     devicesList.add(device)
                 }
