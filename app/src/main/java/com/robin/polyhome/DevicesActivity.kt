@@ -48,7 +48,7 @@ class DevicesActivity : AppCompatActivity() {
                 if (filterType == "light" && device.type == "light") {
                     devicesList.add(device)
                 }
-                else if (filterType == "shutter" && (device.type == "shutter" || device.type == "opening")) {
+                else if (filterType == "shutter" && (device.type == "rolling shutter" || device.type == "garage door")) {
                     devicesList.add(device)
                 }
             }
@@ -65,6 +65,7 @@ class DevicesActivity : AppCompatActivity() {
     private fun sendCommand(deviceId: String, commandValue: String) {
         if (houseId != null && token != null) {
             val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/$deviceId/command"
+            Api().post(url, CommandData(command = commandValue), ::commandSuccess, token)
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
@@ -22,21 +23,22 @@ class DevicesAdapter(
 
         val layout = rowView.findViewById<LinearLayout>(R.id.layoutDeviceItem)
         val txtName = rowView.findViewById<TextView>(R.id.txtDeviceName)
-        val txtIcon = rowView.findViewById<TextView>(R.id.txtIcon)
+        val imgIcon = rowView.findViewById<ImageView>(R.id.imgIcon)
         val txtStatus = rowView.findViewById<TextView>(R.id.txtStatus)
 
         if (device != null) {
             txtName.text = device.id
 
             if (device.type == "light") {
-                txtIcon.text = "💡"
                 val isOn = (device.power ?: 0) > 0
 
                 if (isOn) {
-                    layout.setBackgroundColor(Color.parseColor("#FFF176"))
+                    imgIcon.setImageResource(R.drawable.light_on)
+                    imgIcon.setColorFilter(Color.parseColor("#FBC02D"))
                     txtStatus.text = "ALLUMÉ"
                 } else {
-                    layout.setBackgroundColor(Color.parseColor("#E0E0E0"))
+                    imgIcon.setImageResource(R.drawable.light_off)
+                    imgIcon.setColorFilter(Color.LTGRAY)
                     txtStatus.text = "ÉTEINT"
                 }
 
@@ -45,15 +47,34 @@ class DevicesAdapter(
                     onCommandClick(device.id, command)
                 }
             }
-            else {
-                txtIcon.text = "🪟"
+            else if (device.type == "rolling shutter") {
                 val isOpen = (device.opening ?: 0) > 0
 
                 if (isOpen) {
-                    layout.setBackgroundColor(Color.parseColor("#81C784"))
+                    imgIcon.setImageResource(R.drawable.shutter_open)
+                    imgIcon.setColorFilter(Color.parseColor("#42A5F5"))
                     txtStatus.text = "OUVERT"
                 } else {
-                    layout.setBackgroundColor(Color.parseColor("#E0E0E0"))
+                    imgIcon.setImageResource(R.drawable.shutter)
+                    imgIcon.setColorFilter(Color.LTGRAY)
+                    txtStatus.text = "FERMÉ"
+                }
+
+                layout.setOnClickListener {
+                    val command = if (isOpen) "CLOSE" else "OPEN"
+                    onCommandClick(device.id, command)
+                }
+            }
+            else {
+                val isOpen = (device.opening ?: 0) > 0
+
+                if (isOpen) {
+                    imgIcon.setImageResource(R.drawable.garage_open)
+                    imgIcon.setColorFilter(Color.parseColor("#42A5F5"))
+                    txtStatus.text = "OUVERT"
+                } else {
+                    imgIcon.setImageResource(R.drawable.garage)
+                    imgIcon.setColorFilter(Color.LTGRAY)
                     txtStatus.text = "FERMÉ"
                 }
 
