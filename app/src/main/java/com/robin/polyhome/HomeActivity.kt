@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import android.widget.Button
 
 class HomeActivity : AppCompatActivity() {
     // On prépare l'adaptateur pour la liste déroulante (Spinner)
@@ -28,6 +29,12 @@ class HomeActivity : AppCompatActivity() {
 
         // On charge la liste des maisons
         loadHouses()
+
+        val bttnDeconnexion = findViewById<Button>(R.id.bttnDisconnect)
+
+        bttnDeconnexion?.setOnClickListener {
+            finish()
+        }
     }
 
     private fun loadHouses() {
