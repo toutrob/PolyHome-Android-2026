@@ -2,6 +2,7 @@ package com.robin.polyhome
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,14 +24,34 @@ class DevicesActivity : AppCompatActivity() {
         filterType = intent.getStringExtra("filter")
 
         val title = findViewById<TextView>(R.id.txtCategoryTitle)
-        if (filterType == "light") title.text = "Mes Lumières"
-        else title.text = "Mes Volets"
+        val btnAllOn = findViewById<Button>(R.id.btnAllOn)
+        val btnAllOff = findViewById<Button>(R.id.btnAllOff)
+
+        if (filterType == "light"){
+            title.text = "Lumières"
+            btnAllOn.text = "Tout Allumer"
+            btnAllOff.text = "Tout Éteindre"
+
+            btnAllOn.setOnClickListener {sendGlobalCommand("TURN ON")}
+            btnAllOff.setOnClickListener {sendGlobalCommand("TURN OFF")}
+        } else {
+            title.text = "Volets"
+            btnAllOn.text = "Tout Ouvrir"
+            btnAllOff.text = "Tout Fermer"
+
+            btnAllOn.setOnClickListener {sendGlobalCommand("OPEN") }
+            btnAllOff.setOnClickListener {sendGlobalCommand("CLOSE")}
+        }
 
         val gridView = findViewById<GridView>(R.id.gridDevices)
 
         adapter = DevicesAdapter(this, devicesList, ::sendCommand)
         gridView.adapter = adapter
+    }
 
+    override fun onResume() {
+        super.onResume()
+        // Recharge la liste à chaque fois qu'on revient sur l'écran
         loadDevices()
     }
 
@@ -42,9 +63,11 @@ class DevicesActivity : AppCompatActivity() {
     }
 
     private fun loadDevicesSuccess(responseCode: Int, response: DevicesResponse?) {
-        if (responseCode == 200 && response?.devices != null) {
+        if (responseCode == 200 && response != null) {
             devicesList.clear()
-            for (device in response.devices) {
+
+            val list = response.devices
+            for (device in list) {
                 if (filterType == "light" && device.type == "light") {
                     devicesList.add(device)
                 }
@@ -57,25 +80,64 @@ class DevicesActivity : AppCompatActivity() {
             }
         } else {
             runOnUiThread {
-                Toast.makeText(this, "Erreur chargement", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Echec récupération liste", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun sendCommand(deviceId: String, commandValue: String) {
-        if (houseId != null && token != null) {
-            val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/$deviceId/command"
-            Api().post(url, CommandData(command = commandValue), ::commandSuccess, token)
+    private fun sendGlobalCommand(commandValue: String) {
+        for (device in devicesList) {
+            if (device.type == "light") {
+                if (commandValue == "TURN ON"){
+                    device.power = 1.0
+                } else {
+                    device.power = 0.0
+                }
+            } else {
+                if (commandValue == "OPEN") {
+                    device.opening = 1.0
+                } else {
+                    device.opening = 0.0
+                }
+            }
+            val data = CommandData(command = commandValue)
+            val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/${device.id}/command"
+            Api().post(url, data, ::commandSuccess, token)
         }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun sendCommand(deviceId: String, commandValue: String) {
+        for (device in devicesList) {
+            if (device.id == deviceId) {
+                if (device.type == "light") {
+                    if (commandValue == "TURN ON") {
+                        device.power = 1.0
+                    } else {
+                        device.power = 0.0
+                    }
+                } else {
+                    if (commandValue == "OPEN") {
+                        device.opening = 1.0
+                    } else {
+                        device.opening = 0.0
+                    }
+                }
+            }
+        }
+
+        adapter.notifyDataSetChanged()
+
+        val data = CommandData(command = commandValue)
+        val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/$deviceId/command"
+        Api().post(url, data, ::commandSuccess, token)
     }
 
     private fun commandSuccess(responseCode: Int) {
-        runOnUiThread {
-            if (responseCode == 200) {
-                Toast.makeText(this, "Action effectuée", Toast.LENGTH_SHORT).show()
+        if (responseCode != 200) {
+            runOnUiThread {
+                Toast.makeText(this, "Echec commande", Toast.LENGTH_SHORT).show()
                 loadDevices()
-            } else {
-                Toast.makeText(this, "Erreur ($responseCode)", Toast.LENGTH_SHORT).show()
             }
         }
     }

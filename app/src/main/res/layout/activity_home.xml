@@ -34,7 +34,7 @@
         android:layout_marginBottom="15dp"
         android:onClick="goToLights"
         android:padding="15dp"
-        android:text="💡 Éclairages"
+        android:text="Éclairages"
         android:textSize="18sp" />
 
     <Button
@@ -44,7 +44,7 @@
         android:layout_marginBottom="40dp"
         android:onClick="goToShutters"
         android:padding="15dp"
-        android:text="🪟 Volets &amp; Garage"
+        android:text="Volets et Garage"
         android:textSize="18sp" />
 
     <TextView
@@ -58,13 +58,13 @@
         android:id="@+id/btnScenarios"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="⚡ Scénarios" />
+        android:text="Scénarios" />
 
     <Button
         android:id="@+id/btnGuests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="👥 Gérer les invités" />
+        android:text="Gérer les invités" />
 
     <Space
         android:layout_width="match_parent"
