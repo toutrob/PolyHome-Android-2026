@@ -33,6 +33,7 @@ class HomeActivity : AppCompatActivity() {
         val bttnDeconnexion = findViewById<Button>(R.id.bttnDisconnect)
 
         bttnDeconnexion?.setOnClickListener {
+            TokenManager.saveToken(this, null)
             finish()
         }
     }

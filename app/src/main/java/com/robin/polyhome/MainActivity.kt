@@ -13,6 +13,16 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val savedToken = TokenManager.getToken(this)
+        if (savedToken != null) {
+            val intentHome = Intent(this, HomeActivity::class.java)
+            intentHome.putExtra("token", savedToken)
+            startActivity(intentHome)
+            //finish()
+            return
+        }
+
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_main)
@@ -36,7 +46,5 @@ class MainActivity : AppCompatActivity() {
             val intentRegister = Intent(this, RegisterActivity::class.java)
             startActivity(intentRegister)
         }
-
-
     }
 }

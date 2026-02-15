@@ -15,9 +15,14 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val bttnConnect = findViewById<Button>(R.id.bttnLogin)
+        val bttnRetour = findViewById<Button>(R.id.bttnBack)
 
-        bttnConnect.setOnClickListener { view ->
+        bttnConnect?.setOnClickListener { view ->
             login(view)
+        }
+
+        bttnRetour?.setOnClickListener { view ->
+            finish()
         }
     }
 
@@ -28,11 +33,14 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<EditText>(R.id.edtLoginName).text.toString()
         val password = findViewById<EditText>(R.id.edtLoginPassword).text.toString()
         val loginData = LoginData(login, password)
+        val savedToken = TokenManager.getToken(this)
 
         if (login.isEmpty() || password.isEmpty()) {
+
             Toast.makeText(this, "Incorrect, please fill the fields", Toast.LENGTH_SHORT).show()
             return
         }
+
         Api().post<LoginData, LoginResponse>(
             url,
             loginData,
@@ -43,21 +51,15 @@ class LoginActivity : AppCompatActivity() {
     fun loginSuccess(responseCode: Int, token: LoginResponse?) {
         runOnUiThread {
             if (responseCode == 200 && token != null) {
-                val sharedPref = getSharedPreferences("PolyHomePrefs", Context.MODE_PRIVATE)
-                with(sharedPref.edit()) {
-                    putString("token", token.token)
-                    apply()
-                }
+                TokenManager.saveToken(this, token.token)
 
                 Toast.makeText(this, "Connected !", Toast.LENGTH_SHORT).show()
 
-                // intent pour aller vers HomeActivity
                 val intent = Intent(this, HomeActivity::class.java)
-                // On passe le token
+
                 intent.putExtra("token", token.token)
                 startActivity(intent)
 
-                // pour ne pas revenir au login avec le bouton retour
                 finish()
 
             } else if (responseCode == 400) {
