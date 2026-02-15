@@ -10,11 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class DevicesAdapter(
-    context: Context,
-    private val devices: ArrayList<DeviceData>,
-    private val onCommandClick: (String, String) -> Unit
-) : ArrayAdapter<DeviceData>(context, 0, devices) {
+class DevicesAdapter(context: Context, values: ArrayList<DeviceData>, private val onCommandClick: (String, String) -> Unit) : ArrayAdapter<DeviceData>(context, 0, values) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val rowView = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_device, parent, false)
@@ -30,7 +26,7 @@ class DevicesAdapter(
             txtName.text = device.id
 
             if (device.type == "light") {
-                val isOn = (device.power ?: 0) > 0
+                val isOn = (device.power ?: 0.0) > 0
 
                 if (isOn) {
                     imgIcon.setImageResource(R.drawable.light_on)
@@ -43,12 +39,15 @@ class DevicesAdapter(
                 }
 
                 layout.setOnClickListener {
-                    val command = if (isOn) "TURN OFF" else "TURN ON"
+                    var command = "TURN ON"
+                    if (isOn) {
+                        command = "TURN OFF"
+                    }
                     onCommandClick(device.id, command)
                 }
             }
             else if (device.type == "rolling shutter") {
-                val isOpen = (device.opening ?: 0) > 0
+                val isOpen = (device.opening ?: 0.0) > 0
 
                 if (isOpen) {
                     imgIcon.setImageResource(R.drawable.shutter_open)
@@ -61,12 +60,15 @@ class DevicesAdapter(
                 }
 
                 layout.setOnClickListener {
-                    val command = if (isOpen) "CLOSE" else "OPEN"
+                    var command = "OPEN"
+                    if (isOpen) {
+                        command = "CLOSE"
+                    }
                     onCommandClick(device.id, command)
                 }
             }
             else {
-                val isOpen = (device.opening ?: 0) > 0
+                val isOpen = (device.opening ?: 0.0) > 0
 
                 if (isOpen) {
                     imgIcon.setImageResource(R.drawable.garage_open)
@@ -79,7 +81,10 @@ class DevicesAdapter(
                 }
 
                 layout.setOnClickListener {
-                    val command = if (isOpen) "CLOSE" else "OPEN"
+                    var command = "OPEN"
+                    if (isOpen) {
+                        command = "CLOSE"
+                    }
                     onCommandClick(device.id, command)
                 }
             }

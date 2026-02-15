@@ -23,7 +23,7 @@ class HomeActivity : AppCompatActivity() {
         token = intent.getStringExtra("token")
 
         // On configure la liste déroulante
-        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
+        housesAdapter = ArrayAdapter<HouseData>(this, android.R.layout.simple_spinner_dropdown_item, houses)
         val spinHouses = findViewById<Spinner>(R.id.spinHouses)
         spinHouses.adapter = housesAdapter
 
@@ -38,16 +38,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun loadHouses() {
-        Api().get<List<HouseData>>(
-            "https://polyhome.lesmoulinsdudev.com/api/houses",
-            ::loadHousesSuccess,
-            token
+        Api().get<List<HouseData>>("https://polyhome.lesmoulinsdudev.com/api/houses", ::loadHousesSuccess, token
         )
     }
 
     private fun loadHousesSuccess(responseCode: Int, loadedHouses: List<HouseData>?) {
         if (responseCode == 200 && loadedHouses != null) {
-            houses.clear()
             houses.addAll(loadedHouses)
 
             // On met à jour l'interface sur le thread principal
@@ -70,32 +66,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     // Fonction pour ouvrir la page des périphériques
-    private fun openDevicesActivity(deviceTypeFilter: String) {
-        val spinHouses = findViewById<Spinner>(R.id.spinHouses)
+    private fun openDevicesActivity(type: String) {
+        val SpinHouses = findViewById<Spinner>(R.id.spinHouses)
+        val selected = SpinHouses.selectedItem as HouseData
 
-        val selectedHouse = spinHouses.selectedItem as? HouseData
-
-        if (selectedHouse != null && token != null) {
-            val intent = Intent(this, DevicesActivity::class.java)
-            intent.putExtra("token", token)
-            intent.putExtra("houseId", selectedHouse.houseId.toString())
-            intent.putExtra("filter", deviceTypeFilter) // On passe le filtre (lampe ou volet)
-            startActivity(intent)
-        } else {
-            Toast.makeText(this, "Veuillez sélectionner une maison", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    public fun goToGuests(view: View) {
-        val spinHouses = findViewById<Spinner>(R.id.spinHouses)
-        val selectedHouse = spinHouses.selectedItem as? HouseData
-
-        if (selectedHouse != null && token != null) {
-            if (selectedHouse.owner) {
-                Toast.makeText(this, "Module Invités à venir", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Seul le propriétaire peut gérer les invités", Toast.LENGTH_LONG).show()
-            }
-        }
+        val intent = Intent(this, DevicesActivity::class.java);
+        intent.putExtra("token", token)
+        intent.putExtra("houseId", selected.houseId.toString())
+        intent.putExtra("filter", type)
+        startActivity(intent);
     }
 }
