@@ -1,11 +1,15 @@
 package com.robin.polyhome
 
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class DevicesActivity : AppCompatActivity() {
     private val devicesList: ArrayList<DeviceData> = ArrayList()
@@ -45,14 +49,46 @@ class DevicesActivity : AppCompatActivity() {
 
         val gridView = findViewById<GridView>(R.id.gridDevices)
 
-        adapter = DevicesAdapter(this, devicesList, ::sendCommand)
+        adapter = DevicesAdapter(this, devicesList, ::sendCommand, ::showRenameDialog)
         gridView.adapter = adapter
     }
 
     override fun onResume() {
         super.onResume()
-        // Recharge la liste à chaque fois qu'on revient sur l'écran
         loadDevices()
+    }
+
+    private fun renameDevice(device: DeviceData, newName: String) {
+        val myHouseId = houseId
+        if (myHouseId != null) {
+            lifecycleScope.launch {
+                val storage = DeviceStorage(this@DevicesActivity)
+                storage.saveName(myHouseId, device.id, newName)
+
+                device.customName = newName
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun showRenameDialog(device: DeviceData) {
+        val Input = EditText(this)
+        if (device.customName != null) {
+            Input.setText(device.customName)
+        } else {
+            Input.setText(device.id)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Renommer l'appareil")
+            .setView(Input)
+            .setPositiveButton("Valider") { _, _ ->
+                val newName = Input.text.toString()
+                if (newName.isNotEmpty()) {
+                    renameDevice(device, newName)
+                }
+            }
+            .show()
     }
 
     private fun loadDevices() {
@@ -75,7 +111,17 @@ class DevicesActivity : AppCompatActivity() {
                     devicesList.add(device)
                 }
             }
-            runOnUiThread {
+
+            lifecycleScope.launch {
+                val storage = DeviceStorage(this@DevicesActivity)
+
+                devicesList.forEach { device ->
+                    val savedName = storage.getName(houseId, device.id)
+                    if (savedName != null) {
+                        device.customName = savedName
+                    }
+                }
+
                 adapter.notifyDataSetChanged()
             }
         } else {

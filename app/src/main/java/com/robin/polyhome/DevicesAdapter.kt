@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class DevicesAdapter(context: Context, values: ArrayList<DeviceData>, private val onCommandClick: (String, String) -> Unit) : ArrayAdapter<DeviceData>(context, 0, values) {
+class DevicesAdapter(context: Context, values: ArrayList<DeviceData>, private val onCommandClick: (String, String) -> Unit, private val onRename: (DeviceData) -> Unit) : ArrayAdapter<DeviceData>(context, 0, values) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val rowView = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_device, parent, false)
@@ -18,12 +18,21 @@ class DevicesAdapter(context: Context, values: ArrayList<DeviceData>, private va
         val device = getItem(position)
 
         val layout = rowView.findViewById<LinearLayout>(R.id.layoutDeviceItem)
-        val txtName = rowView.findViewById<TextView>(R.id.txtDeviceName)
+        val Name = rowView.findViewById<TextView>(R.id.txtDeviceName)
         val imgIcon = rowView.findViewById<ImageView>(R.id.imgIcon)
         val txtStatus = rowView.findViewById<TextView>(R.id.txtStatus)
 
         if (device != null) {
-            txtName.text = device.id
+            if (device.customName != null) {
+                Name.text = device.customName
+            } else {
+                Name.text = device.id
+            }
+
+            layout.setOnLongClickListener {
+                onRename(device)
+                true
+            }
 
             if (device.type == "light") {
                 val isOn = (device.power ?: 0.0) > 0
