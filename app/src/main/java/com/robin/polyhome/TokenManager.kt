@@ -1,11 +1,12 @@
 package com.robin.polyhome
 
 import android.content.Context
+import kotlin.coroutines.Continuation
 
 object TokenManager {
     private const val PREFS_NAME = "Polyhome_Prefs"
     private const val KEY_TOKEN = "auth_token"
-
+    private const val KEY_LOGIN = "login_username"
 
     fun saveToken(context: Context, token: String?) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -15,5 +16,15 @@ object TokenManager {
     fun getToken(context: Context): String? {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getString(KEY_TOKEN, null)
+    }
+
+    fun saveLogin(context: Context, login: String){
+        val sharedPreferencesLogin = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferencesLogin.edit().putString(KEY_LOGIN, login).apply()
+    }
+
+    fun getLogin(context: Context): String? {
+        val sharedLogin = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedLogin.getString(KEY_LOGIN, null)
     }
 }

@@ -48,16 +48,20 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
-    fun loginSuccess(responseCode: Int, token: LoginResponse?) {
+    fun loginSuccess(responseCode: Int, responseToken: LoginResponse?) {
         runOnUiThread {
-            if (responseCode == 200 && token != null) {
-                TokenManager.saveToken(this, token.token)
+            if (responseCode == 200 && responseToken != null) {
+
+                TokenManager.saveToken(this, responseToken.token)
 
                 Toast.makeText(this, "Connected !", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(this, HomeActivity::class.java)
+                val currentLogin = findViewById<EditText>(R.id.edtLoginName).text.toString()
 
-                intent.putExtra("token", token.token)
+                TokenManager.saveLogin(this, currentLogin)
+
+                intent.putExtra("token", responseToken.token)
                 startActivity(intent)
 
                 finish()
