@@ -15,7 +15,13 @@ object TokenManager {
 
     fun getToken(context: Context): String? {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return sharedPreferences.getString(KEY_TOKEN, null)
+        val token =  sharedPreferences.getString(KEY_TOKEN, null)
+        return if (token.isNullOrEmpty()) null else token
+    }
+
+    fun clearToken(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().remove(KEY_TOKEN).apply()
     }
 
     fun saveLogin(context: Context, login: String){
