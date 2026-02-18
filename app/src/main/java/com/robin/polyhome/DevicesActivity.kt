@@ -23,7 +23,7 @@ class DevicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_devices)
 
-        token = intent.getStringExtra("token")
+        token = TokenManager.getToken(this)
         houseId = intent.getStringExtra("houseId")
         filterType = intent.getStringExtra("filter")
 
