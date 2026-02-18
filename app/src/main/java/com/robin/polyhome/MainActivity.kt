@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             val intentHome = Intent(this, HomeActivity::class.java)
             intentHome.putExtra("token", savedToken)
             startActivity(intentHome)
-            //finish()
+            finish()
             return
         }
 

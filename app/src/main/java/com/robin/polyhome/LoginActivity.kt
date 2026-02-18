@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import kotlinx.coroutines.MainScope
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         bttnRetour?.setOnClickListener { view ->
-            finish()
+            val intentMain = Intent(this, MainActivity::class.java)
+            startActivity(intentMain)
         }
     }
 
