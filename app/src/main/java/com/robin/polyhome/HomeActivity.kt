@@ -52,8 +52,8 @@ class HomeActivity : AppCompatActivity() {
 
         bttnDeconnexion.setOnClickListener {
             TokenManager.clearToken(this)
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            val intentMain = Intent(this, MainActivity::class.java)
+            startActivity(intentMain)
             finish()
         }
 

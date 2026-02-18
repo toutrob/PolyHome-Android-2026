@@ -23,8 +23,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         bttnRetour?.setOnClickListener { view ->
-            val intentMain = Intent(this, MainActivity::class.java)
-            startActivity(intentMain)
+            finish()
         }
     }
 
