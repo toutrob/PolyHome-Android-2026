@@ -114,20 +114,21 @@ class GuestsActivity : AppCompatActivity() {
     }
 
     private fun removeGuest(username: String) {
-        val encodedName = URLEncoder.encode(username, "UTF-8").replace("+", "%20")
-        val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/users/$encodedName"
+        val url = "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/users"
 
-        Api().delete(url, onSuccess = { responseCode ->
+        val body = GuestUser(username)
+
+        Api().delete(url, body, onSuccess = { responseCode ->
             runOnUiThread {
                 if (responseCode == 200) {
                     Toast.makeText(this, "Invité supprimé", Toast.LENGTH_SHORT).show()
                     loadGuests()
                 } else if (responseCode == 400) {
-                    Toast.makeText(this, "Data incorrect", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Données incorrectes", Toast.LENGTH_SHORT).show()
                 } else if (responseCode == 403){
-                    Toast.makeText(this, "Unauthorized acces", Toast.LENGTH_SHORT).show()
-                } else if (responseCode == 500) {
-                    Toast.makeText(this, "Internal Error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Accès interdit", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Erreur : $responseCode", Toast.LENGTH_SHORT).show()
                 }
             }
         }, securityToken = tokenGuest)
